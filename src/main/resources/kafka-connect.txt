@@ -1,0 +1,63 @@
+-- Get list plugin --
+curl --location 'http://localhost:8083/connector-plugins'
+
+
+--- Create connector --
+curl --location 'http://localhost:8083/connectors' \
+--header 'Content-Type: application/json' \
+--data '{
+  "name": "clickhouse-sink-connector",
+  "config": {
+    "connector.class": "com.clickhouse.kafka.connect.ClickHouseSinkConnector",
+    "tasks.max": "1",
+    "topics": "view",
+    "hostname": "clickhouse-server",
+    "port": "8123",
+    "database": "kafka",
+    "table": "alarm-events",
+    "username": "default",
+    "password": "",
+    "batchSize": "10",
+    "flushInterval": "3000",
+    "insertMode": "INSERT",
+    "ssl": "false",
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "false"
+  }
+}
+
+'
+--- Get status connector --
+curl --location 'http://localhost:8083/connectors/clickhouse-sink-connector/status'
+
+
+-- Get list connector --
+curl --location 'http://localhost:8083/connectors'
+
+
+-- Delete --
+curl --location --request DELETE 'http://localhost:8083/connectors/clickhouse-sink-connector'
+
+
+-- Update --
+curl --location --request PUT 'http://localhost:8083/connectors/clickhouse-sink-connector/config' \
+--header 'Content-Type: application/json' \
+--data '{
+    "connector.class": "com.clickhouse.kafka.connect.ClickHouseSinkConnector",
+    "tasks.max": "1",
+    "topics": "alarm_events",
+    "hostname": "clickhouse-server",
+    "port": "8123",
+    "database": "kafka",
+    "table": "alarm_events",
+    "username": "default",
+    "password": "",
+    "batchSize": "10",
+    "flushInterval": "3000",
+    "insertMode": "INSERT",
+    "ssl": "false",
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "false"
+}'
