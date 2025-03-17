@@ -1,0 +1,27 @@
+spring:
+    application:
+        name: Kafka-ClickHouse
+    datasource:
+        url: jdbc:clickhouse://localhost:8123/kafka?compress=0
+        username: default
+        password:
+        driver-class-name: com.clickhouse.jdbc.ClickHouseDriver
+    jpa:
+        show-sql: true
+        database-platform: org.hibernate.dialect.MySQL8Dialect
+        hibernate:
+            ddl-auto: none
+    kafka:
+        bootstrap-servers: localhost:9092
+        consumer:
+            group-id: group_id
+            auto-offset-reset: earliest
+            key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+            value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+        #            value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+        properties:
+            spring.json.trusted.packages: "*" # Tin cậy tất cả các package khi deserialize JSON
+        producer:
+            key-serializer: org.apache.kafka.common.serialization.StringSerializer
+            value-serializer: org.apache.kafka.common.serialization.StringSerializer
+#            value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
