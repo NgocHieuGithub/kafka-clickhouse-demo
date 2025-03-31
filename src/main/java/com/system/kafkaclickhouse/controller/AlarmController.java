@@ -4,17 +4,16 @@ import com.system.kafkaclickhouse.dto.AlarmDTO;
 import com.system.kafkaclickhouse.service.KafkaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 @RequestMapping("alarm")
 public class AlarmController {
     private final KafkaService kafkaService;
-
+    public AlarmController(KafkaService kafkaService) {
+        this.kafkaService = kafkaService;
+    }
     @PostMapping
     public ResponseEntity<?> sendMessage(@RequestBody AlarmDTO request) {
         kafkaService.sendData(request);

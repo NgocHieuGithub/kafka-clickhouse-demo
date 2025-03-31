@@ -37,4 +37,21 @@ SELECT detectionTime, eventType, countState() AS count
 FROM alarm_events
 GROUP BY detectionTime, eventType;
 
+--- Test
+CREATE TABLE kafka_del_event
+(
+    alarmIdentifier Nullable(String)
+) ENGINE = Kafka
+      SETTINGS kafka_broker_list = 'kafka:9093',
+          kafka_topic_list = 'del',
+          kafka_group_name = 'del-group',
+          kafka_format = 'JSONEachRow';
 
+CREATE MATERIALIZED VIEW mv_alarm_del TO alarm_del
+AS SELECT alarmIdentifier,
+   FROM kafka_del_event;
+
+CREATE TABLE alarm_del (
+  alarmIdentifier String
+) ENGINE = MergeTree()
+ORDER BY alarmIdentifier;

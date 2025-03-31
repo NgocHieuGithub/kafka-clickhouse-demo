@@ -12,27 +12,33 @@ import org.springframework.stereotype.Service;
 
 @Slf4j(topic = "Kafka-service-log")
 @Service
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class KafkaServiceImpl implements KafkaService {
     KafkaTemplate<String, String> kafkaTemplate;
     ObjectMapper objectMapper;
+
+    public KafkaServiceImpl(KafkaTemplate<String, String> kafkaTemplate, ObjectMapper objectMapper) {
+        this.kafkaTemplate = kafkaTemplate;
+        this.objectMapper = objectMapper;
+    }
+
     @Override
     public <T> void sendData(T request) {
         try {
             String TOPIC = "AlarmEvent";
             kafkaTemplate.send(TOPIC, objectMapper.writeValueAsString(request));
         } catch (JsonProcessingException e) {
-            log.error(e.getMessage(), e);
+//            log.error(e.getMessage(), e);
         }
     }
     @Override
     public <T> void sendDataV2(T request) {
         try {
             String TOPIC = "alarm_events";
-            kafkaTemplate.send(TOPIC, objectMapper.writeValueAsString(request));
+            kafkaTemplate.send("test2", objectMapper.writeValueAsString(request));
         } catch (JsonProcessingException e) {
-            log.error(e.getMessage(), e);
+//            log.error(e.getMessage(), e);
         }
     }
 }

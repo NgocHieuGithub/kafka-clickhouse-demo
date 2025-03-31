@@ -53,3 +53,5 @@ final ;
 SELECT * FROM system.tables WHERE engine = 'Kafka';
 
 SELECT * FROM system.kafka_consumers WHERE table = 'kafka_alarm_events';
+
+SELECT * FROM system.kafka_consumers WHERE table = 'kafka_del_event';

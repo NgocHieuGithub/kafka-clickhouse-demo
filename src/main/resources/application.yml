@@ -2,9 +2,10 @@ spring:
     application:
         name: Kafka-ClickHouse
     datasource:
-        url: jdbc:clickhouse://localhost:8123/kafka?compress=0
-        username: default
-        password:
+#        url: jdbc:clickhouse://localhost:8123/kafka?compress=0
+#        username: default
+#        password: ""
+        url: jdbc:clickhouse://localhost:8123/kafka?user=default&password=&compress=false
         driver-class-name: com.clickhouse.jdbc.ClickHouseDriver
     jpa:
         show-sql: true
@@ -25,3 +26,23 @@ spring:
             key-serializer: org.apache.kafka.common.serialization.StringSerializer
             value-serializer: org.apache.kafka.common.serialization.StringSerializer
 #            value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+#            batch-size: 16384
+#            linger-ms: 50
+#            compression-type: lz4
+#            max-in-flight-requests-per-connection: 5
+#            acks: all
+#            retries: 3
+#            buffer-memory: 33554432
+            batch-size: 524288
+            linger-ms: 5
+            compression-type: lz4
+            max-in-flight-requests-per-connection: 2
+            acks: 1
+            retries: 5
+            retry.backoff.ms: 100
+            buffer-memory: 67108864
+server:
+    tomcat:
+        threads:
+            max: 1000
+        accept-count: 2000
