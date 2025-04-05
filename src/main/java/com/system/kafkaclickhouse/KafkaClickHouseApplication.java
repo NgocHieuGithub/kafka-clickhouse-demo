@@ -8,7 +8,7 @@ public class KafkaClickHouseApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(KafkaClickHouseApplication.class, args);
-        System.out.println("Start system ...........");
+        System.out.println("Start project name: Kafka-clickhouse-application ...........");
     }
 
 }
