@@ -2,16 +2,20 @@ package com.system.kafkaclickhouse.service.serviceImpl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.system.kafkaclickhouse.dao.AlarmDAO;
 import com.system.kafkaclickhouse.dto.AlarmDTO;
 import com.system.kafkaclickhouse.service.KafkaService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -22,18 +26,47 @@ import java.util.TimeZone;
 public class KafkaServiceImpl implements KafkaService {
     KafkaTemplate<String, String> kafkaTemplate;
     ObjectMapper objectMapper;
+    AlarmDAO alarmDAO;
 
     @Override
     public <T> void sendData(T request) {
         try {
             log.info("Start send message alarm to kafka.......................");
-            String TOPIC = "AlarmEvent";
-            kafkaTemplate.send(TOPIC, objectMapper.writeValueAsString(convertToJson((AlarmDTO) request)));
+            actionAlarm((AlarmDTO) request);
             log.info("End send message alarm to kafka.......................");
         } catch (JsonProcessingException e) {
             log.error(e.getMessage(), e);
         }
     }
+
+    private void actionAlarm(AlarmDTO alarmDTO) throws JsonProcessingException {
+        String key = alarmDTO.getCategory() + "_" + alarmDTO.getEventType();
+        log.info("Key: {}", key);
+        if (alarmDAO.checkFilterAlarm().containsKey(key)){
+            List<Integer> resultMap = alarmDAO.checkFilterAlarm().get(key);
+            String TOPIC = "AlarmEvent";
+            switch (resultMap.get(0)) {
+                case 1:
+                    log.info("Case 1 action alarm");
+                    kafkaTemplate.send(TOPIC, objectMapper.writeValueAsString(convertToJson( alarmDTO)));
+                    break;
+                case 2:
+                    log.info("Case 2 action alarm");
+                    break;
+                default:
+                    log.info("Case nothing action alarm");
+                    break;
+            }
+            if (resultMap.get(1) == 1) {
+                log.info("Call api third ...........");
+            } else {
+                log.info("No call api third .............");
+            }
+        } else {
+            log.info("Key not found");
+        }
+    }
+
     private Map<String, Object> convertToJson(AlarmDTO alarm){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -57,6 +90,11 @@ public class KafkaServiceImpl implements KafkaService {
         alarmMap.put("pppoeAccount", alarm.getPppoeAccount());
         alarmMap.put("controllerSerial", alarm.getControllerSerial());
         return alarmMap;
+    }
+    @CacheEvict(value = "config_filter_alarm", allEntries = true)
+    @Scheduled(fixedRate = 120000) // 2p
+    public void clearCache() {
+        System.out.println("Cache 'config_filter_alarm' has been cleared.");
     }
 
     // Test performance kafka

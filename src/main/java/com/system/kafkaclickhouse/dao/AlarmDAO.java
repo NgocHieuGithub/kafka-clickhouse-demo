@@ -5,12 +5,15 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -134,5 +137,30 @@ public class AlarmDAO {
 
     public Map<String, Object> statisticTotalResolved(){
         return jdbcTemplate.queryForMap("select countIf(severity = 0) as Total_Resolved_Alarm from tbl_history_alarm ae final");
+    }
+
+    @Cacheable(value = "config_filter_alarm", cacheManager = "cacheManager")
+    public Map<String, List<Integer>> checkFilterAlarm() {
+        String sql = "SELECT category, event_type, save_database, call_third_party FROM tbl_config_filter_alarm";
+        log.info("Query database .................");
+        List<Object[]> results = namedParameterJdbcTemplate.query(sql, (rs, rowNum) -> {
+            return new Object[] {
+                    rs.getString("category"),
+                    rs.getString("event_type"),
+                    rs.getInt("save_database"),
+                    rs.getInt("call_third_party")
+            };
+        });
+
+        Map<String, List<Integer>> resultMap = new HashMap<>();
+
+        for (Object[] row : results) {
+            String key = row[0] + "_" + row[1];  // category + event_type
+            List<Integer> value = Arrays.asList((Integer) row[2], (Integer) row[3]);
+
+            resultMap.put(key, value);
+        }
+        log.info("ResultMap: {}", resultMap);
+        return resultMap;
     }
 }
