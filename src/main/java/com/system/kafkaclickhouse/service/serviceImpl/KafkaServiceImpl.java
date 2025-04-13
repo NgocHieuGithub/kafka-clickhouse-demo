@@ -4,20 +4,20 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.system.kafkaclickhouse.dao.AlarmDAO;
 import com.system.kafkaclickhouse.dto.AlarmDTO;
+import com.system.kafkaclickhouse.service.AlarmCacheService;
 import com.system.kafkaclickhouse.service.KafkaService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TimeZone;
+import java.util.*;
 
 @Slf4j(topic = "Kafka-service-log")
 @Service
@@ -27,7 +27,8 @@ public class KafkaServiceImpl implements KafkaService {
     KafkaTemplate<String, String> kafkaTemplate;
     ObjectMapper objectMapper;
     AlarmDAO alarmDAO;
-
+    AlarmCacheService alarmCacheService;
+    Integer MAX_POLL = 50;
     @Override
     public <T> void sendData(T request) {
         try {
@@ -52,6 +53,7 @@ public class KafkaServiceImpl implements KafkaService {
                     break;
                 case 2:
                     log.info("Case 2 action alarm");
+                    alarmCacheService.processIncomingAlarm(alarmDTO.getSeverity(), alarmDTO.getEventType());
                     break;
                 default:
                     log.info("Case nothing action alarm");
@@ -59,6 +61,7 @@ public class KafkaServiceImpl implements KafkaService {
             }
             if (resultMap.get(1) == 1) {
                 log.info("Call api third ...........");
+                kafkaTemplate.send("call_third_party", objectMapper.writeValueAsString(convertToJson( alarmDTO)));
             } else {
                 log.info("No call api third .............");
             }
@@ -91,17 +94,29 @@ public class KafkaServiceImpl implements KafkaService {
         alarmMap.put("controllerSerial", alarm.getControllerSerial());
         return alarmMap;
     }
+
     @CacheEvict(value = "config_filter_alarm", allEntries = true)
     @Scheduled(fixedRate = 120000) // 2p
     public void clearCache() {
         System.out.println("Cache 'config_filter_alarm' has been cleared.");
     }
 
+    List<ConsumerRecord<String, String>> buffer = new ArrayList<>();
+    @Override
+    @KafkaListener(topics = "call_third_party", groupId = "call_third_party_group", containerFactory = "batchFactory")
+    public void consumeBatch(List<ConsumerRecord<String, String>> records) {
+        buffer.addAll(records);
+        if (buffer.size() >= MAX_POLL) {
+            log.info("Send {} messages to api third party", MAX_POLL);
+            // Gọi API xử lý tại đây
+            buffer.subList(0, MAX_POLL).clear(); // Remove first 50 after processing
+        }
+    }
+
     // Test performance kafka
     @Override
     public <T> void sendDataV2(T request) {
         try {
-//            String TOPIC = "alarm_events";
             kafkaTemplate.send("test2", objectMapper.writeValueAsString(request));
         } catch (JsonProcessingException e) {
             log.error(e.getMessage(), e);

@@ -39,3 +39,16 @@ SELECT eventType, detectionTime, severity, countState() AS count
 FROM tbl_history_alarm
 GROUP BY eventType, detectionTime, severity;
 
+-- Report by product class V2
+CREATE TABLE tbl_report_by_productClassV2(
+   severity         UInt8,
+   detectionTime    DateTime,
+   productClass     String,
+   count            AggregateFunction(count, UInt32)
+)   ENGINE = AggregatingMergeTree()
+ORDER BY (productClass, detectionTime, severity);
+
+CREATE MATERIALIZED VIEW tbl_report_by_productClass_mvV2 TO tbl_report_by_productClassV2 AS
+SELECT ta.productClass, tha.detectionTime, tha.severity, countState() AS count
+FROM tbl_history_alarm tha left join tbl_ap ta on tha.serialNumber = ta.serialNumber
+GROUP BY ta.productClass, tha.detectionTime, tha.severity;
