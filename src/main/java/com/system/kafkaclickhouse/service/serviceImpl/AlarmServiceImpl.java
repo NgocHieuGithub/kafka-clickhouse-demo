@@ -1,7 +1,7 @@
 package com.system.kafkaclickhouse.service.serviceImpl;
 
 import com.system.kafkaclickhouse.dao.AlarmDAO;
-import com.system.kafkaclickhouse.dto.AlarmDTO;
+import com.system.kafkaclickhouse.dto.Alarm;
 import com.system.kafkaclickhouse.service.AlarmService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +21,8 @@ public class AlarmServiceImpl implements AlarmService {
     AlarmDAO alarmDAO;
 
     @Override
-    public List<AlarmDTO> search(Integer severity, LocalDateTime detectionTimeStart, LocalDateTime detectionTimeEnd, String manufacturer,
-                                 String productClass, String serialNumber, String eventType) {
+    public List<Alarm> search(Integer severity, LocalDateTime detectionTimeStart, LocalDateTime detectionTimeEnd, String manufacturer,
+                              String productClass, String serialNumber, String eventType) {
         log.info("Search alarm .................");
         return alarmDAO.search(severity, detectionTimeStart, detectionTimeEnd, manufacturer, productClass, serialNumber, eventType);
     }

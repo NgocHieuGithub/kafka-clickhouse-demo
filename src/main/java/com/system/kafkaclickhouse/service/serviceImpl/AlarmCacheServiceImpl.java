@@ -66,9 +66,9 @@ public class AlarmCacheServiceImpl implements AlarmCacheService {
         String[] parts = key.split(":");
         String severity = parts[0];
         String eventType = parts[1];
-
+        String productClass = parts[2];
         // Ví dụ: gọi repository để cập nhật hoặc insert vào bảng alarm_counting
-        alarmCountingDAO.insertOrUpdateAlarmCounting(Integer.valueOf(severity), eventType, count);
+        alarmCountingDAO.insertOrUpdateAlarmCounting(Integer.valueOf(severity), eventType, productClass, count);
         System.out.println("Flushing key: " + key + " with count: " + count);
     }
 

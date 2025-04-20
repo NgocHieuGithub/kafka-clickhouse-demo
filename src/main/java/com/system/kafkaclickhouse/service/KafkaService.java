@@ -10,6 +10,6 @@ public interface KafkaService {
 
     void consumeBatch(List<ConsumerRecord<String, String>> records);
 
-    <T> void sendDataV2(T request);
+//    <T> void sendDataV2(T request);
 }
 

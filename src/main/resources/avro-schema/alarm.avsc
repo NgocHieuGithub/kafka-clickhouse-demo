@@ -1,0 +1,81 @@
+{
+  "type": "record",
+  "name": "AlarmRecord",
+  "namespace": "com.system.kafkaclickhouse.dto",
+  "fields": [
+    {
+      "name": "ap_serial_number",
+      "type": "string"
+    },
+    {
+      "name": "alarm_identifier",
+      "type": "string"
+    },
+    {
+      "name": "event_type",
+      "type": "string"
+    },
+    {
+      "name": "probable_cause",
+      "type": "string"
+    },
+    {
+      "name": "specific_problem",
+      "type": "string"
+    },
+    {
+      "name": "perceived_severity",
+      "type": "int"
+    },
+    {
+      "name": "addition_text",
+      "type": "string"
+    },
+    {
+      "name": "addition_information",
+      "type": "string"
+    },
+    {
+      "name": "manufacturer",
+      "type": "string"
+    },
+    {
+      "name": "category",
+      "type": "string"
+    },
+    {
+      "name": "product_class",
+      "type": "string"
+    },
+    {
+      "name": "notification_type",
+      "type": "string"
+    },
+    {
+      "name": "event_time",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      }
+    },
+    {
+      "name": "detection_time",
+      "type": {
+        "type": "long",
+        "logicalType": "timestamp-millis"
+      }
+    },
+    {
+      "name": "manager_object_instance",
+      "type": "string"
+    },
+    {
+      "name": "controller_serial_number",
+      "type": "string"
+    },
+    {
+      "name": "pppoe_account",
+      "type": "string"
+    }
+  ]
+}

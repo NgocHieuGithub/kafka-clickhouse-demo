@@ -15,13 +15,13 @@ import org.springframework.stereotype.Repository;
 public class AlarmCountingDAO {
     NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    public void insertOrUpdateAlarmCounting(Integer severity, String eventType, Integer count) {
+    public void insertOrUpdateAlarmCounting(Integer severity, String eventType, String productClass, Integer count) {
         String sql = """
-            INSERT INTO tbl_alarm_counting (severity, event_type, number, version)
-            SELECT :severity, :eventType, sum(number) + :count, max(version) + 1
+            INSERT INTO tbl_alarm_counting (product_class, perceived_severity, event_type, number, version)
+            SELECT :productClass, :severity, :eventType, sum(number) + :count, max(version) + 1
             FROM tbl_alarm_counting
-            WHERE severity = :severity AND event_type = :eventType
-            GROUP BY severity, event_type
+            WHERE severity = :severity AND event_type = :eventType AND product_class = :productClass
+            GROUP BY perceived_severity, event_type, product_class
             """;
 
         MapSqlParameterSource params = new MapSqlParameterSource()
@@ -33,8 +33,8 @@ public class AlarmCountingDAO {
         if (rows == 0) {
             // Nếu không có bản ghi, thực hiện insert lần đầu tiên
             String insertSql = """
-                INSERT INTO tbl_alarm_counting (severity, event_type, number, version)
-                VALUES (:severity, :eventType, :count, 1)
+                INSERT INTO tbl_alarm_counting (product_class, perceived_severity, event_type, number, version)
+                VALUES (:productClass, :severity, :eventType, :count, 1)
                 """;
             namedParameterJdbcTemplate.update(insertSql, params);
         }

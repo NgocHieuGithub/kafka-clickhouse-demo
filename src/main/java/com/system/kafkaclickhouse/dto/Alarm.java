@@ -10,11 +10,11 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AlarmDTO {
+public class Alarm {
     String alarmIdentifier;
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     Timestamp alarmChangeTime;
-    String severity;
+    Integer severity;
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     Timestamp detectionTime;
     String manufacturer;

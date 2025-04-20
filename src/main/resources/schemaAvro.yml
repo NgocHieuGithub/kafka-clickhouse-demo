@@ -1,0 +1,6 @@
+schema-registry:
+  image: confluentinc/cp-schema-registry:7.5.0
+  ports:
+    - "8081:8081"
+  environment:
+    SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:9092

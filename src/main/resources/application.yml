@@ -18,33 +18,14 @@ spring:
             port: 6379
     kafka:
         bootstrap-servers: localhost:9092
-        consumer:
-            group-id: group_id
-            auto-offset-reset: earliest
-            key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-            value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-        #            value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
         properties:
-            spring.json.trusted.packages: "*" # Tin cậy tất cả các package khi deserialize JSON
+            schema.registry.url: http://localhost:8081
+        consumer:
+            key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+            value-deserializer:  io.confluent.kafka.serializers.KafkaAvroDeserializer
         producer:
             key-serializer: org.apache.kafka.common.serialization.StringSerializer
-            value-serializer: org.apache.kafka.common.serialization.StringSerializer
-#            value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-#            batch-size: 16384
-#            linger-ms: 50
-#            compression-type: lz4
-#            max-in-flight-requests-per-connection: 5
-#            acks: all
-#            retries: 3
-#            buffer-memory: 33554432
-            batch-size: 524288
-            linger-ms: 5
-            compression-type: lz4
-            max-in-flight-requests-per-connection: 2
-            acks: 1
-            retries: 5
-            retry.backoff.ms: 100
-            buffer-memory: 67108864
+            value-serializer:  io.confluent.kafka.serializers.KafkaAvroSerializer
 server:
     tomcat:
         threads:

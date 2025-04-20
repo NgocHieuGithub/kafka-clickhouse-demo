@@ -1,6 +1,6 @@
 package com.system.kafkaclickhouse.dao;
 
-import com.system.kafkaclickhouse.dto.AlarmDTO;
+import com.system.kafkaclickhouse.dto.Alarm;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -26,8 +26,8 @@ public class AlarmDAO {
     NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 
-    public List<AlarmDTO> search(Integer severity, LocalDateTime detectionTimeStart, LocalDateTime detectionTimeEnd, String manufacturer,
-                                 String productClass, String serialNumber, String eventType){
+    public List<Alarm> search(Integer severity, LocalDateTime detectionTimeStart, LocalDateTime detectionTimeEnd, String manufacturer,
+                              String productClass, String serialNumber, String eventType){
         StringBuilder sql = new StringBuilder("SELECT * ");
 
         MapSqlParameterSource params = new MapSqlParameterSource();
@@ -70,7 +70,7 @@ public class AlarmDAO {
             params.addValue("eventType", eventType);
         }
         sql.append(" ORDER BY detectionTime DESC ");
-        return namedParameterJdbcTemplate.query(sql.toString(), params, new BeanPropertyRowMapper<>(AlarmDTO.class));
+        return namedParameterJdbcTemplate.query(sql.toString(), params, new BeanPropertyRowMapper<>(Alarm.class));
     }
 
     // Statistic By EventType
