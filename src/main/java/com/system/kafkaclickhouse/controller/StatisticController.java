@@ -19,27 +19,18 @@ public class StatisticController {
     AlarmService alarmService;
 
     @GetMapping("/productClass")
-    public ResponseEntity<?> statisticProductClass(
-            @RequestParam(required = false) LocalDateTime startDate,
-            @RequestParam(required = false) LocalDateTime endDate,
-            @RequestParam(required = false) Integer severity){
-        return ResponseEntity.ok().body(alarmService.statisticByProductClass(startDate, endDate, severity));
+    public ResponseEntity<?> statisticProductClass(){
+        return ResponseEntity.ok().body(alarmService.statisticByProductClass());
     }
 
     @GetMapping("/eventType")
-    public ResponseEntity<?> statisticEventType(
-            @RequestParam(required = false) LocalDateTime startDate,
-            @RequestParam(required = false) LocalDateTime endDate,
-            @RequestParam(required = false) Integer severity){
-        return ResponseEntity.ok().body(alarmService.statisticByEventType(startDate, endDate, severity));
+    public ResponseEntity<?> statisticEventType(){
+        return ResponseEntity.ok().body(alarmService.statisticByEventType());
     }
 
     @GetMapping("/severity")
-    public ResponseEntity<?> statisticSeverity(
-            @RequestParam(required = false) LocalDateTime startDate,
-            @RequestParam(required = false) LocalDateTime endDate,
-            @RequestParam(required = false) Integer severity){
-        return ResponseEntity.ok().body(alarmService.statisticBySeverity(startDate, endDate, severity));
+    public ResponseEntity<?> statisticSeverity(){
+        return ResponseEntity.ok().body(alarmService.statisticBySeverity());
     }
 
     @GetMapping("/total")

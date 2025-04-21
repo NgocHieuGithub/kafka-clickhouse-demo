@@ -74,61 +74,27 @@ public class AlarmDAO {
     }
 
     // Statistic By EventType
-    public List<Map<String, Object>> statisticByEventType(LocalDateTime startTime, LocalDateTime endTime, Integer severity) {
-        StringBuilder sql = new StringBuilder("SELECT eventType, countMerge(count) AS total_count FROM tbl_report_by_eventType");
+    public Map<String, Object> statisticByEventType() {
+        StringBuilder sql = new StringBuilder("SELECT event_type, countMerge(count) AS total_count FROM tbl_report_by_eventType GROUP BY event_type");
 
         MapSqlParameterSource params = new MapSqlParameterSource();
 
-        if (startTime != null && endTime != null) {
-            sql.append(" WHERE detectionTime BETWEEN :startTime AND :endTime");
-            params.addValue("startTime", startTime);
-            params.addValue("endTime", endTime);
-        }
-        if (severity != null){
-            sql.append(" AND severity = :severity");
-            params.addValue("severity", severity);
-        }
-        sql.append(" GROUP BY eventType");
-
-        return namedParameterJdbcTemplate.queryForList(sql.toString(), params);
+        return namedParameterJdbcTemplate.queryForMap(sql.toString(), params);
     }
     // Statistic By ProductClass
-    public List<Map<String, Object>> statisticByProductClass(LocalDateTime startTime, LocalDateTime endTime, Integer severity) {
-        StringBuilder sql = new StringBuilder("SELECT productClass, countMerge(count) AS total_count FROM tbl_report_by_productClass");
+    public Map<String, Object> statisticByProductClass() {
+        StringBuilder sql = new StringBuilder("SELECT product_class, countMerge(count) AS total_count FROM tbl_report_by_productClass GROUP BY product_class");
 
         MapSqlParameterSource params = new MapSqlParameterSource();
 
-        if (startTime != null && endTime != null) {
-            sql.append(" WHERE detectionTime BETWEEN :startTime AND :endTime");
-            params.addValue("startTime", startTime);
-            params.addValue("endTime", endTime);
-        }
-        if (severity != null){
-            sql.append(" AND severity = :severity");
-            params.addValue("severity", severity);
-        }
-        sql.append(" GROUP BY productClass");
-
-        return namedParameterJdbcTemplate.queryForList(sql.toString(), params);
+        return namedParameterJdbcTemplate.queryForMap(sql.toString(), params);
     }
     // Statistic By Severity
-    public List<Map<String, Object>> statisticBySeverity(LocalDateTime startTime, LocalDateTime endTime, Integer severity) {
-        StringBuilder sql = new StringBuilder("SELECT severity, countMerge(count) AS total_count FROM tbl_report_by_severity");
-
+    public Map<String, Object> statisticBySeverity() {
+        StringBuilder sql = new StringBuilder("SELECT perceived_severity, countMerge(count) AS total_count FROM tbl_report_by_severity GROUP BY perceived_severity");
         MapSqlParameterSource params = new MapSqlParameterSource();
 
-        if (startTime != null && endTime != null) {
-            sql.append(" WHERE detectionTime BETWEEN :startTime AND :endTime");
-            params.addValue("startTime", startTime);
-            params.addValue("endTime", endTime);
-        }
-        if (severity != null){
-            sql.append(" AND severity = :severity");
-            params.addValue("severity", severity);
-        }
-        sql.append(" GROUP BY severity");
-
-        return namedParameterJdbcTemplate.queryForList(sql.toString(), params);
+        return namedParameterJdbcTemplate.queryForMap(sql.toString(), params);
     }
 
     public Map<String, Object> statisticTotal(){

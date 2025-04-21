@@ -9,9 +9,9 @@ import java.util.Map;
 public interface AlarmService {
     List<Alarm> search(Integer severity, LocalDateTime detectionTimeStart, LocalDateTime detectionTimeEnd, String manufacturer,
                        String productClass, String serialNumber, String eventType);
-    List<Map<String, Object>> statisticByEventType(LocalDateTime startTime, LocalDateTime endTime, Integer severity);
-    List<Map<String, Object>> statisticByProductClass(LocalDateTime startTime, LocalDateTime endTime, Integer severity);
-    List<Map<String, Object>> statisticBySeverity(LocalDateTime startTime, LocalDateTime endTime, Integer severity);
+    Map<String, Object> statisticByEventType();
+    Map<String, Object> statisticByProductClass();
+    Map<String, Object> statisticBySeverity();
     Map<String, Object> statisticTotal();
     Map<String, Object> statisticTotalResolved();
 }

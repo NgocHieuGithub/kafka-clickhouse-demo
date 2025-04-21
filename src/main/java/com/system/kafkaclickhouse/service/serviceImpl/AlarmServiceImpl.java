@@ -28,21 +28,21 @@ public class AlarmServiceImpl implements AlarmService {
     }
 
     @Override
-    public List<Map<String, Object>> statisticByEventType(LocalDateTime startTime, LocalDateTime endTime, Integer severity) {
+    public Map<String, Object> statisticByEventType() {
         log.info("Statistic by event type .................");
-        return alarmDAO.statisticByEventType(startTime, endTime, severity);
+        return alarmDAO.statisticByEventType();
     }
 
     @Override
-    public List<Map<String, Object>> statisticByProductClass(LocalDateTime startTime, LocalDateTime endTime, Integer severity) {
+    public Map<String, Object> statisticByProductClass() {
         log.info("Statistic by product class .................");
-        return alarmDAO.statisticByProductClass(startTime, endTime, severity);
+        return alarmDAO.statisticByProductClass();
     }
 
     @Override
-    public List<Map<String, Object>> statisticBySeverity(LocalDateTime startTime, LocalDateTime endTime, Integer severity) {
+    public Map<String, Object> statisticBySeverity() {
         log.info("Statistic by severity .................");
-        return alarmDAO.statisticBySeverity(startTime, endTime, severity);
+        return alarmDAO.statisticBySeverity();
     }
 
     @Override
