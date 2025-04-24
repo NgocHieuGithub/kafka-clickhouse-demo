@@ -2,12 +2,17 @@ package com.system.kafkaclickhouse.controller;
 
 import com.system.kafkaclickhouse.dto.Alarm;
 import com.system.kafkaclickhouse.service.KafkaService;
+import com.system.kafkaclickhouse.service.serviceImpl.ExcelExportService;
 import com.system.kafkaclickhouse.service.serviceImpl.KafkaAvro;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,10 +35,17 @@ public class AlarmController {
 //        return ResponseEntity.ok("Done ........................");
 //    }
     KafkaAvro kafkaService;
+    private final ExcelExportService excelExportService;
 
     @PostMapping
-    public ResponseEntity<?> sendMessage(@RequestBody Alarm request) {
-        kafkaService.sendKafkaAvro(request);
+    public ResponseEntity<?> sendMessage(@RequestBody Map<String, String> map,@RequestParam String serial) {
+        kafkaService.sendKafkaAvro(map, serial);
+        return ResponseEntity.ok("Done .......................");
+    }
+
+    @GetMapping
+    public ResponseEntity<?> tesst() throws SQLException, IOException {
+        excelExportService.exportDataToExcel();
         return ResponseEntity.ok("Done .......................");
     }
 }

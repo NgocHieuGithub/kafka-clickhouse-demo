@@ -28,7 +28,7 @@ public class AlarmDAO {
 
     public List<Alarm> search(Integer severity, LocalDateTime detectionTimeStart, LocalDateTime detectionTimeEnd, String manufacturer,
                               String productClass, String serialNumber, String eventType){
-        StringBuilder sql = new StringBuilder("SELECT * ");
+        StringBuilder sql = new StringBuilder("SELECT alarm_identifier, toDateTime(detection_time, 'Asia/Ho_Chi_Minh') as detection_time" );
 
         MapSqlParameterSource params = new MapSqlParameterSource();
         if (productClass != null){
@@ -46,7 +46,9 @@ public class AlarmDAO {
                     sql.append(" From tbl_history_alarm Where 1 = 1");
                     break;
             }
-            params.addValue("productClass", productClass);
+            params.addValue("product_class", productClass);
+        } else {
+            sql.append(" From tbl_history_alarm Where 1 = 1");
         }
         if (severity != null) {
             sql.append(" AND severity = :severity");
@@ -69,7 +71,7 @@ public class AlarmDAO {
             sql.append(" AND eventType = :eventType");
             params.addValue("eventType", eventType);
         }
-        sql.append(" ORDER BY detectionTime DESC ");
+        sql.append(" ORDER BY detection_time DESC ");
         return namedParameterJdbcTemplate.query(sql.toString(), params, new BeanPropertyRowMapper<>(Alarm.class));
     }
 
